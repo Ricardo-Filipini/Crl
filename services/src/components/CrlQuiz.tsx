@@ -164,7 +164,7 @@ const CrlQuiz: React.FC = () => {
       <p className="mb-6 text-sm text-yellow-400">Pergunta {currentQuestionIndex + 1} de {questions.length}</p>
 
       {!showFeedback ? (
-        <div className="animate-fade-in">
+        <div>
           <p className="text-lg mb-6 min-h-[3em] flex items-center justify-center">{currentQuestion.question}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {currentQuestion.options.map((option: string, index: number) => (
@@ -179,7 +179,7 @@ const CrlQuiz: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center min-h-[14em] justify-center animate-fade-in">
+        <div className="flex flex-col items-center min-h-[14em] justify-center">
           <p className={`text-xl font-bold mb-4 ${isCorrect ? 'text-lime-400' : 'text-red-500'}`}>
             {feedbackMessage}
           </p>

@@ -25,30 +25,33 @@ const CrlGame: React.FC = () => {
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const animationFrameId = useRef<number>();
   const gameIntervalId = useRef<number>();
-  const itemSpawnerIntervalId = useRef<number>(); // Separate interval for spawner
 
-
-  const startGame = () => {
-    // FIX: Provide arguments to state setters to reset the game state.
+  const resetGame = useCallback(() => {
+    setGameState('idle');
     setScore(0);
     setTimeLeft(GAME_DURATION);
     setItems([]);
-    setGameState('playing');
-  };
-
-  const endGame = useCallback(() => {
-    setGameState('over');
-    if (animationFrameId.current) {
-      cancelAnimationFrame(animationFrameId.current);
-    }
-    if (gameIntervalId.current) {
-      clearInterval(gameIntervalId.current);
-    }
-    if (itemSpawnerIntervalId.current) {
-      clearInterval(itemSpawnerIntervalId.current);
+    if (gameAreaRef.current) {
+        const rect = gameAreaRef.current.getBoundingClientRect();
+        setPlayerPos({ x: rect.width / 2 - PLAYER_SIZE / 2, y: rect.height / 2 - PLAYER_SIZE / 2 });
     }
   }, []);
   
+  const startGame = () => {
+    setGameState('playing');
+  };
+  
+  useEffect(() => {
+    // Reset game state when starting
+    if (gameState === 'playing') {
+      // FIX: Provide arguments to state setters to reset the game state.
+      setScore(0);
+      setTimeLeft(GAME_DURATION);
+      setItems([]);
+    }
+  }, [gameState]);
+
+
   const gameLoop = useCallback(() => {
     setItems(prevItems => {
         const newItems = prevItems
@@ -78,8 +81,8 @@ const CrlGame: React.FC = () => {
                 if (item.type === 'collectible') {
                     scoreGained++;
                 } else {
-                    endGame(); // End game on obstacle collision
-                    return []; // Clear items
+                    setGameState('over');
+                    return [];
                 }
             } else {
                 remainingItems.push(item);
@@ -92,27 +95,24 @@ const CrlGame: React.FC = () => {
     });
 
     animationFrameId.current = requestAnimationFrame(gameLoop);
-  }, [playerPos, endGame]);
+  }, [playerPos]);
 
 
   useEffect(() => {
     if (gameState === 'playing') {
-      // Start the game loop
       animationFrameId.current = requestAnimationFrame(gameLoop);
 
-      // Start the game timer
       gameIntervalId.current = window.setInterval(() => {
+        // Timer
         setTimeLeft(t => {
           if (t <= 1) {
-            endGame();
+            setGameState('over');
             return 0;
           }
           return t - 1;
         });
-      }, 1000);
         
-      // Start the item spawner
-      itemSpawnerIntervalId.current = window.setInterval(() => {
+        // Item Spawner
         if (gameAreaRef.current) {
           const gameWidth = gameAreaRef.current.clientWidth;
           const type: ItemType = Math.random() < 0.7 ? 'collectible' : 'obstacle';
@@ -127,17 +127,16 @@ const CrlGame: React.FC = () => {
             },
           ]);
         }
+
       }, ITEM_SPAWN_INTERVAL);
 
     }
 
-    // Cleanup function
     return () => {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
       if (gameIntervalId.current) clearInterval(gameIntervalId.current);
-      if (itemSpawnerIntervalId.current) clearInterval(itemSpawnerIntervalId.current);
     };
-  }, [gameState, gameLoop, endGame]);
+  }, [gameState, gameLoop]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (gameState !== 'playing' || !gameAreaRef.current) return;
@@ -155,15 +154,13 @@ const CrlGame: React.FC = () => {
     const handleResize = () => {
         if (gameAreaRef.current) {
              const rect = gameAreaRef.current.getBoundingClientRect();
-             if(gameState !== 'playing') {
-                setPlayerPos({ x: rect.width / 2 - PLAYER_SIZE / 2, y: rect.height / 2 - PLAYER_SIZE / 2 });
-             }
+             setPlayerPos({ x: rect.width / 2 - PLAYER_SIZE / 2, y: rect.height / 2 - PLAYER_SIZE / 2 });
         }
     };
     window.addEventListener('resize', handleResize);
     handleResize(); // Initial call
     return () => window.removeEventListener('resize', handleResize);
-  }, [gameState]);
+  }, []);
 
 
   return (
@@ -177,7 +174,7 @@ const CrlGame: React.FC = () => {
         className="relative w-full h-96 bg-gradient-to-br from-blue-800 to-cyan-600 rounded-lg overflow-hidden cursor-none border-2 border-purple-400"
       >
         {gameState !== 'playing' && (
-            <div className="absolute inset-0 bg-black/60 z-20 flex flex-col justify-center items-center p-4 animate-fade-in">
+            <div className="absolute inset-0 bg-black/60 z-20 flex flex-col justify-center items-center p-4">
                  {gameState === 'over' && (
                     <>
                     <h4 className="font-pixel text-4xl text-red-500">GAME OVER</h4>
@@ -198,8 +195,8 @@ const CrlGame: React.FC = () => {
 
         {gameState === 'playing' && (
           <>
-            <div className="absolute top-2 left-3 font-pixel text-white text-xl z-10" style={{textShadow: '2px 2px 4px #000'}}>Pecesas: {score}</div>
-            <div className="absolute top-2 right-3 font-pixel text-white text-xl z-10" style={{textShadow: '2px 2px 4px #000'}}>Tempo: {timeLeft}</div>
+            <div className="absolute top-2 left-3 font-pixel text-white text-xl z-10">Pecesas: {score}</div>
+            <div className="absolute top-2 right-3 font-pixel text-white text-xl z-10">Tempo: {timeLeft}</div>
             
             <img 
               src={GAME_PLAYER_IMAGE.src} 
