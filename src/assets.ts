@@ -85,6 +85,9 @@ export const GALLERY_IMAGES: CrlAsset[] = [
   CRL_SINGER,
   CRL_EATING,
   CRL_FRIENDS_COLLAGE,
+  CRL_MUSCLE_SELFIE,
+  CRL_OTHER_DOLL,
+  CRL_THUMBS_UP_SIDE,
 ];
 
 // Todos os vídeos para a galeria de vídeos
