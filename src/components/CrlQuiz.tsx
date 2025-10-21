@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Question {
   question: string;
@@ -97,7 +97,6 @@ const CrlQuiz: React.FC = () => {
     setQuizOver(false);
   }, [gameId]);
 
-
   const handleAnswer = (selectedIndex: number) => {
     if (showFeedback) return;
 
@@ -168,7 +167,7 @@ const CrlQuiz: React.FC = () => {
         <div>
           <p className="text-lg mb-6 min-h-[3em] flex items-center justify-center">{currentQuestion.question}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {currentQuestion.options.map((option, index) => (
+            {currentQuestion.options.map((option: string, index: number) => (
               <button
                 key={index}
                 onClick={() => handleAnswer(index)}

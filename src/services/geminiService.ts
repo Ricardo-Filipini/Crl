@@ -3,10 +3,10 @@ import { GoogleGenAI, Modality } from "@google/genai";
 const API_KEY = process.env.API_KEY;
 
 if (!API_KEY) {
-  console.error("API_KEY is not set in environment variables.");
+  throw new Error("API_KEY is not set in environment variables. Please add it to your .env file or Netlify environment variables.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 export const generateNickname = async (): Promise<string> => {
   try {
@@ -56,7 +56,6 @@ export const generateFunnyImage = async (base64Image: string, mimeType: string, 
       }
     }
     
-    // If we get here, no image was found. This could be due to safety filters.
     console.error("Image generation failed, no image data in response:", JSON.stringify(response, null, 2));
     if (response.candidates?.[0]?.finishReason === 'SAFETY') {
         throw new Error("A IA se recusou a criar essa atrocidade por motivos de segurança. O CRL é perigoso demais!");
@@ -67,7 +66,6 @@ export const generateFunnyImage = async (base64Image: string, mimeType: string, 
   } catch (error) {
     console.error("Error generating funny image:", error);
     if (error instanceof Error) {
-      // Propagate our specific, funnier error messages
       if (error.message.includes("segurança") || error.message.includes("vergonha")) {
           throw error;
       }

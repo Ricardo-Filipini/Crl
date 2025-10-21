@@ -10,8 +10,17 @@ import CrlGame from './components/CrlGame';
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900/80 via-gray-900/80 to-purple-900/80 text-white p-4 sm:p-6 md:p-8 overflow-x-hidden relative">
+    <div className="min-h-screen bg-gray-900 text-white p-4 sm:p-6 md:p-8 overflow-x-hidden relative">
       <FloatingCrls />
+      <div 
+        className="absolute inset-0 bg-gradient-to-br from-indigo-900/80 via-gray-900/80 to-purple-900/80"
+        style={{
+          backgroundImage: "url('/Crl/Imagens/crl-rosto.png')",
+          backgroundSize: '200px 200px',
+          backgroundBlendMode: 'multiply',
+          opacity: 0.1,
+        }}
+      ></div>
       <div className="container mx-auto max-w-5xl relative z-10">
         <Header />
 

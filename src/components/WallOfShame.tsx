@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { generateFunnyImage } from '../services/geminiService';
-import { MEME_BASE_IMAGES } from '../assets';
+import { MEME_BASE_IMAGES, CrlImage } from '../assets';
 
 const prompts = [
   "Transforme este homem em um super-herói com uma capa esvoaçante e um pijama de unicórnio cor-de-rosa.",
@@ -8,8 +8,6 @@ const prompts = [
   "Recrie esta cena como se ele estivesse surfando em uma pizza gigante de pepperoni no espaço sideral, com estrelas de queijo.",
   "Imagine este homem como o vocalista de uma banda de rock farofa dos anos 80, com um mullet loiro, e roupas de couro apertadas.",
   "Faça este homem ser o rei de um castelo feito de doces e guloseimas, usando uma coroa de jujubas.",
-  "Coloque o rosto deste homem em um corpo de um anão de jardim dançando macarena em cima de um cogumelo.",
-  "Recrie a imagem com este homem participando de uma competição de comer pão com vina.",
   "Coloque este homem em uma festa num barco, mostrando seu famoso e hipnotizante 'molejo de ombros' para a multidão.",
   "Use IA para sutilmente (ou não) trocar os mamilos deste homem por duas fatias de calabresa.",
   "Crie uma cena onde o Sr. Odilon está claramente impressionado com o molejo do CRL, promovendo-o a diretor no meio do escritório.",
@@ -20,7 +18,7 @@ const prompts = [
 const urlToBase64 = async (url: string): Promise<{ base64: string, mimeType: string }> => {
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Failed to fetch image: ${response.statusText}`);
+    throw new Error(`Falha ao buscar imagem: ${response.statusText}`);
   }
   const blob = await response.blob();
   return new Promise((resolve, reject) => {
@@ -40,7 +38,7 @@ const WallOfShame: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [currentPrompt, setCurrentPrompt] = useState<string>('');
-  const [selectedImage, setSelectedImage] = useState(MEME_BASE_IMAGES[0]);
+  const [selectedImage, setSelectedImage] = useState<CrlImage>(MEME_BASE_IMAGES[0]);
 
   const handleGenerateImage = useCallback(async () => {
     setIsLoading(true);
