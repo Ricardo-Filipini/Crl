@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GAME_PLAYER_IMAGE, GAME_OBSTACLE_IMAGE, GAME_COLLECTIBLE_IMAGE } from '../assets';
 
-const PLAYER_SIZE = 60;
-const ITEM_SIZE = 50;
-const GAME_DURATION = 30; // seconds
-const ITEM_SPAWN_INTERVAL = 800; // ms
-const ITEM_SPEED = 2.5;
+// Parâmetros do Jogo Ajustados
+const PLAYER_SIZE = 50;
+const ITEM_SIZE = 40;
+const GAME_DURATION = 30; // segundos
+const ITEM_SPAWN_INTERVAL = 1000; // ms (mais lento)
+const ITEM_SPEED = 2; // (mais lento)
 
 type ItemType = 'collectible' | 'obstacle';
 interface Item {
@@ -22,173 +23,146 @@ const CrlGame: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [playerPos, setPlayerPos] = useState({ x: 0, y: 0 });
   const [items, setItems] = useState<Item[]>([]);
+  
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const animationFrameId = useRef<number>();
-  const gameTimerId = useRef<number>();
-  const itemSpawnerId = useRef<number>();
+  // Fix: In a browser environment, `setInterval` returns a `number`, not a `NodeJS.Timeout`.
+  const gameIntervals = useRef<number[]>([]);
 
-  const endGame = useCallback(() => {
-    if (gameState === 'playing') {
-      setGameState('over');
+  // Função para limpar todos os timers e loops
+  const cleanup = useCallback(() => {
+    if (animationFrameId.current) {
+      cancelAnimationFrame(animationFrameId.current);
     }
-  }, [gameState]);
-
-  useEffect(() => {
-    // Cleanup intervals and animation frames when game ends or component unmounts
-    return () => {
-      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
-      if (gameTimerId.current) clearInterval(gameTimerId.current);
-      if (itemSpawnerId.current) clearInterval(itemSpawnerId.current);
-    };
+    gameIntervals.current.forEach(clearInterval);
+    gameIntervals.current = [];
   }, []);
 
-  const startGame = () => {
-    setScore(0);
-    setTimeLeft(GAME_DURATION);
-    setItems([]);
-    setGameState('playing');
-  };
-
+  // Função principal do loop do jogo
   const gameLoop = useCallback(() => {
-    setItems(prevItems => {
-      const playerRect = {
-        x: playerPos.x,
-        y: playerPos.y,
-        width: PLAYER_SIZE,
-        height: PLAYER_SIZE,
-      };
+    if (gameState !== 'playing') return;
 
-      let scoreDelta = 0;
-      const remainingItems = [];
+    setItems(prevItems => {
+      const playerRect = { x: playerPos.x, y: playerPos.y, width: PLAYER_SIZE, height: PLAYER_SIZE };
+      let newScore = score;
+      const updatedItems: Item[] = [];
 
       for (const item of prevItems) {
-        // Move item
         const newItem = { ...item, y: item.y + ITEM_SPEED };
-        
-        // Check if item is off-screen
-        if (newItem.y > (gameAreaRef.current?.clientHeight || 0)) {
-          continue;
-        }
 
-        const itemRect = { x: newItem.x, y: newItem.y, width: ITEM_SIZE, height: ITEM_SIZE };
-        const isColliding =
-          playerRect.x < itemRect.x + itemRect.width &&
-          playerRect.x + playerRect.width > itemRect.x &&
-          playerRect.y < itemRect.y + itemRect.height &&
-          playerRect.y + playerRect.height > itemRect.y;
+        if (newItem.y < (gameAreaRef.current?.clientHeight || 0)) {
+           const itemRect = { x: newItem.x, y: newItem.y, width: ITEM_SIZE, height: ITEM_SIZE };
+            const isColliding =
+              playerRect.x < itemRect.x + itemRect.width &&
+              playerRect.x + playerRect.width > itemRect.x &&
+              playerRect.y < itemRect.y + itemRect.height &&
+              playerRect.y + playerRect.height > itemRect.y;
 
-        if (isColliding) {
-          if (newItem.type === 'collectible') {
-            scoreDelta++;
+          if (isColliding) {
+            if (item.type === 'collectible') {
+              newScore++;
+            } else {
+              setGameState('over');
+              return []; // Limpa os itens e para o loop
+            }
           } else {
-            endGame();
-            return []; // Clear all items on collision
+            updatedItems.push(newItem);
           }
-        } else {
-          remainingItems.push(newItem);
         }
       }
-      
-      if (scoreDelta > 0) {
-        setScore(s => s + scoreDelta);
+      if (newScore !== score) {
+        setScore(newScore);
       }
-      
-      return remainingItems;
+      return updatedItems;
     });
 
     animationFrameId.current = requestAnimationFrame(gameLoop);
-  }, [playerPos, endGame]);
+  }, [gameState, playerPos.x, playerPos.y, score]);
 
+  // Efeito para controlar o estado do jogo (iniciar/parar)
   useEffect(() => {
     if (gameState === 'playing') {
-      animationFrameId.current = requestAnimationFrame(gameLoop);
-
-      gameTimerId.current = window.setInterval(() => {
+      // Inicia o timer do jogo
+      const timerId = setInterval(() => {
         setTimeLeft(t => {
           if (t <= 1) {
-            endGame();
+            setGameState('over');
             return 0;
           }
           return t - 1;
         });
       }, 1000);
 
-      itemSpawnerId.current = window.setInterval(() => {
+      // Inicia o spawner de itens
+      const spawnerId = setInterval(() => {
         if (gameAreaRef.current) {
           const gameWidth = gameAreaRef.current.clientWidth;
-          const type: ItemType = Math.random() < 0.7 ? 'collectible' : 'obstacle';
           setItems(prev => [
             ...prev,
             {
               id: Date.now() + Math.random(),
               x: Math.random() * (gameWidth - ITEM_SIZE),
               y: -ITEM_SIZE,
-              type,
-              rotation: Math.random() * 360,
+              type: Math.random() < 0.75 ? 'collectible' : 'obstacle',
+              rotation: Math.random() * 90 - 45,
             },
           ]);
         }
       }, ITEM_SPAWN_INTERVAL);
 
+      gameIntervals.current.push(timerId, spawnerId);
+      animationFrameId.current = requestAnimationFrame(gameLoop);
+
     } else {
-      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
-      if (gameTimerId.current) clearInterval(gameTimerId.current);
-      if (itemSpawnerId.current) clearInterval(itemSpawnerId.current);
+      cleanup();
     }
-  }, [gameState, gameLoop, endGame]);
+    
+    // Função de limpeza ao desmontar o componente ou mudar o estado
+    return cleanup;
+  }, [gameState, gameLoop, cleanup]);
+
+  const startGame = () => {
+    setScore(0);
+    setTimeLeft(GAME_DURATION);
+    setItems([]);
+    if (gameAreaRef.current) {
+        const rect = gameAreaRef.current.getBoundingClientRect();
+        setPlayerPos({ x: (rect.width - PLAYER_SIZE) / 2, y: rect.height - PLAYER_SIZE - 20 });
+    }
+    setGameState('playing');
+  };
   
-  const updatePlayerPosition = (clientX: number, clientY: number) => {
+  const updatePlayerPosition = (clientX: number) => {
     if (!gameAreaRef.current) return;
     const rect = gameAreaRef.current.getBoundingClientRect();
     const x = clientX - rect.left - PLAYER_SIZE / 2;
-    const y = clientY - rect.top - PLAYER_SIZE / 2;
-    
     const clampedX = Math.max(0, Math.min(x, rect.width - PLAYER_SIZE));
-    const clampedY = Math.max(0, Math.min(y, rect.height - PLAYER_SIZE));
-
-    setPlayerPos({ x: clampedX, y: clampedY });
+    setPlayerPos(prev => ({ ...prev, x: clampedX }));
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (gameState !== 'playing') return;
-    updatePlayerPosition(e.clientX, e.clientY);
+    updatePlayerPosition(e.clientX);
   };
   
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     if (gameState !== 'playing') return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    updatePlayerPosition(touch.clientX, touch.clientY);
+    updatePlayerPosition(e.touches[0].clientX);
   };
-  
-  useEffect(() => {
-    const handleResize = () => {
-      if (gameAreaRef.current) {
-        const rect = gameAreaRef.current.getBoundingClientRect();
-        if (gameState !== 'playing') {
-          setPlayerPos({ x: rect.width / 2 - PLAYER_SIZE / 2, y: rect.height / 2 - PLAYER_SIZE / 2 });
-        }
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial call
-    return () => window.removeEventListener('resize', handleResize);
-  }, [gameState]);
-
 
   return (
     <div className="bg-black bg-opacity-40 p-6 rounded-2xl shadow-lg shadow-purple-500/30 text-center border-2 border-purple-500">
       <h3 className="font-pixel text-2xl text-purple-400 mb-2">Natação Calabresal</h3>
-      <p className="mb-4 text-gray-300">Ajude o CRL a resgatar as 'Pecesas' e desviar das calabresas!</p>
+      <p className="mb-4 text-gray-300">Pegue os joinhas e desvie das calabresas!</p>
       
       <div 
         ref={gameAreaRef}
         onMouseMove={handleMouseMove}
         onTouchMove={handleTouchMove}
-        className="relative w-full h-96 bg-gradient-to-br from-blue-800 to-cyan-600 rounded-lg overflow-hidden cursor-none border-2 border-purple-400 touch-none"
+        className="relative w-full h-96 bg-gradient-to-br from-blue-900 to-cyan-700 rounded-lg overflow-hidden cursor-none border-2 border-purple-400 touch-none"
       >
         {gameState !== 'playing' && (
-          <div className="absolute inset-0 bg-black/60 z-20 flex flex-col justify-center items-center p-4 animate-fade-in">
+          <div className="absolute inset-0 bg-black/70 z-20 flex flex-col justify-center items-center p-4 animate-fade-in">
             {gameState === 'over' && (
               <>
                 <h4 className="font-pixel text-4xl text-red-500">GAME OVER</h4>
@@ -202,7 +176,7 @@ const CrlGame: React.FC = () => {
               onClick={startGame}
               className="font-pixel mt-6 bg-lime-500 hover:bg-lime-400 text-black py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
             >
-              {gameState === 'over' ? 'Jogar de Novo' : 'Começar!'}
+              {gameState === 'over' ? 'Tentar de Novo' : 'Começar!'}
             </button>
           </div>
         )}
@@ -215,10 +189,10 @@ const CrlGame: React.FC = () => {
             <img 
               src={GAME_PLAYER_IMAGE.src} 
               alt="Player"
-              className="absolute rounded-full"
+              className="absolute"
               style={{
                 left: playerPos.x,
-                top: playerPos.y,
+                bottom: 10, // Posição fixa no fundo
                 width: PLAYER_SIZE,
                 height: PLAYER_SIZE,
                 filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.7))',

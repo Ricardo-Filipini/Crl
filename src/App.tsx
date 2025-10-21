@@ -26,31 +26,31 @@ const App: React.FC = () => {
         <Header />
 
         <main className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 animate-fade-in" style={{ animationDelay: '100ms' }}>
             <NicknameGenerator />
           </div>
 
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 animate-fade-in" style={{ animationDelay: '200ms' }}>
             <WallOfShame />
           </div>
 
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 animate-fade-in" style={{ animationDelay: '300ms' }}>
             <CrlGame />
           </div>
 
-          <div className="bg-black bg-opacity-40 p-6 rounded-2xl shadow-lg shadow-lime-500/30 border-2 border-lime-500">
+          <div className="bg-black bg-opacity-40 p-6 rounded-2xl shadow-lg shadow-lime-500/30 border-2 border-lime-500 animate-fade-in" style={{ animationDelay: '400ms' }}>
             <CrlQuiz />
           </div>
 
-          <div className="bg-black bg-opacity-40 p-6 rounded-2xl shadow-lg shadow-fuchsia-500/30 border-2 border-fuchsia-500">
+          <div className="bg-black bg-opacity-40 p-6 rounded-2xl shadow-lg shadow-fuchsia-500/30 border-2 border-fuchsia-500 animate-fade-in" style={{ animationDelay: '500ms' }}>
             <MessageBoard />
           </div>
           
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 animate-fade-in" style={{ animationDelay: '600ms' }}>
             <ImageGallery />
           </div>
 
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 animate-fade-in" style={{ animationDelay: '700ms' }}>
             <VideoGallery />
           </div>
         </main>
