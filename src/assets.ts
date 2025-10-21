@@ -63,6 +63,8 @@ export const GALLERY_IMAGES: CrlImage[] = [
   CRL_DOLL,
   CRL_GOOD_MORNING,
   CRL_THUMBS_UP_SIDE,
+  CRL_LIFTING_WEIGHTS,
+  CRL_OTHER_DOLL,
 ];
 
 // Assets para CrlGame
