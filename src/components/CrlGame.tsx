@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { GAME_PLAYER_IMAGE, GAME_OBSTACLE_IMAGE, GAME_COLLECTIBLE_IMAGE } from '../assets';
+// FIX: Import asset arrays instead of single images to match exports from assets.ts.
+import { GAME_PLAYER_IMAGE, GAME_OBSTACLE_ASSETS, GAME_COLLECTIBLE_ASSETS } from '../assets';
 
 const PLAYER_SIZE = 60;
 const ITEM_SIZE = 50;
@@ -14,6 +15,8 @@ interface Item {
   y: number;
   type: ItemType;
   rotation: number;
+  // FIX: Add imageSrc to store which specific image to render for the item.
+  imageSrc: string;
 }
 
 const CrlGame: React.FC = () => {
@@ -105,6 +108,15 @@ const CrlGame: React.FC = () => {
         if (gameAreaRef.current) {
           const gameWidth = gameAreaRef.current.clientWidth;
           const type: ItemType = Math.random() < 0.7 ? 'collectible' : 'obstacle';
+          // FIX: Select a random image from the asset arrays for each new item.
+          const imageSrc =
+            type === 'collectible'
+              ? GAME_COLLECTIBLE_ASSETS[
+                  Math.floor(Math.random() * GAME_COLLECTIBLE_ASSETS.length)
+                ].src
+              : GAME_OBSTACLE_ASSETS[
+                  Math.floor(Math.random() * GAME_OBSTACLE_ASSETS.length)
+                ].src;
           setItems(prev => [
             ...prev,
             {
@@ -113,6 +125,8 @@ const CrlGame: React.FC = () => {
               y: -ITEM_SIZE,
               type,
               rotation: Math.random() * 360,
+              // FIX: Assign the randomly selected image source.
+              imageSrc,
             },
           ]);
         }
@@ -203,7 +217,8 @@ const CrlGame: React.FC = () => {
             {items.map(item => (
               <img
                 key={item.id}
-                src={item.type === 'collectible' ? GAME_COLLECTIBLE_IMAGE.src : GAME_OBSTACLE_IMAGE.src}
+                // FIX: Use the `imageSrc` property from the item object.
+                src={item.imageSrc}
                 alt={item.type}
                 className="absolute"
                 style={{
