@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { generateFunnyImage } from '../services/geminiService';
-import { MEME_BASE_IMAGES, CrlAsset } from '../assets';
+import { MEME_BASE_IMAGES, CrlImage } from '../assets';
 
 const prompts = [
   "Transforme este homem em um super-herói com uma capa esvoaçante e um pijama de unicórnio cor-de-rosa.",
@@ -38,7 +38,7 @@ const WallOfShame: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [currentPrompt, setCurrentPrompt] = useState<string>('');
-  const [selectedImage, setSelectedImage] = useState<CrlAsset>(MEME_BASE_IMAGES[0]);
+  const [selectedImage, setSelectedImage] = useState<CrlImage>(MEME_BASE_IMAGES[0]);
 
   const handleGenerateImage = useCallback(async () => {
     setIsLoading(true);
