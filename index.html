@@ -13,7 +13,7 @@
       body {
         font-family: sans-serif;
         /* Adicionando a imagem de fundo para o efeito "Overdose de CRL" */
-        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEkSURBVHhe7dDBAcAgDMCwk/YvHYb4A3SgoeEIAAACiBAgBIgQIASCFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIASIECAEiBAgBIIWIECACECCECACECCECACECCECACECCECACECAENgAnLgC2G1g0QgAAAABJRU5ErkJggg==');
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEkSURBVHhe7dDBAcAgDMCwk/YvHYb4A3SgoeEIAAACiBAgBIgQIASCFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIARiFiBEgBAgBIgQIASIECAEiBAgBIIWIECACECCECACECCECACECCECACECCECACECAENgAnLgC2G1g0QgAAAABJRU5ErkJggg==');
         background-blend-mode: multiply;
         background-color: rgba(0, 0, 0, 0.5);
       }
@@ -21,19 +21,22 @@
         font-family: 'Press Start 2P', cursive;
       }
     </style>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "vite": "https://aistudiocdn.com/vite@^7.1.11",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0"
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.0.4",
+    "process": "https://aistudiocdn.com/process@^0.11.10"
   }
 }
 </script>
 </head>
   <body class="bg-gray-900">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
