@@ -8,7 +8,7 @@ interface Question {
 }
 
 const allQuestions: Question[] = [
-    {
+  {
     question: "Qual a característica física mais lendária do CRL?",
     options: ["Ondulação capilar de anjo", "Mamilos que parecem duas calabresas", "Um dedão do pé perfeitamente quadrado", "Sobrancelhas que se comunicam em código Morse"],
     correct: 1,
@@ -50,7 +50,7 @@ const allQuestions: Question[] = [
     correct: 1,
     feedback: "Essa é clássica. Uma ameaça velada com um toque de poesia."
   },
-    {
+  {
     question: "Qual o superpoder secreto do CRL?",
     options: ["Falar com esquilos", "Transformar água em cerveja quente", "Ficar invisível apenas para cobradores", "Dançar a Macarena perfeitamente"],
     correct: 2,

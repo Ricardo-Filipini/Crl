@@ -12,7 +12,7 @@ export const generateNickname = async (): Promise<string> => {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: "Gere um apelido extremamente cafona e engraçado para um amigo chamado Carlos. Ele se acha o rei da balada, adora uma festa no barco, tem um molejo único com os ombros e mamilos que parecem calabresas. Ele também virou diretor na empresa Odilon de forma misteriosa. Use adjetivos inesperados e combine esses elementos. Seja criativo e zueiro. Retorne apenas o apelido, sem aspas, sem texto adicional, só o apelido puro.",
+      contents: "Gere um apelido extremamente cafona e engraçado para um amigo chamado Carlos. Ele se acha o rei da balada, adora uma festa no barco, tem um molejo único com os ombros e mamilos que parecem calabresas. Ele também virou diretor na empresa Odilon de forma misteriosa, talvez por agradar o chefe. Ele tinha uma 'empresa' chamada CRL 9nhas Corp para agenciar 'talentos'. Use adjetivos inesperados e combine esses elementos. Seja criativo e zueiro. Retorne apenas o apelido, sem aspas, sem texto adicional, só o apelido puro.",
     });
     const text = response.text;
     if (text) {

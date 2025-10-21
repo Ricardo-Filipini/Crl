@@ -12,6 +12,7 @@ const ImageGallery: React.FC = () => {
               src={img.src} 
               alt={img.alt}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:rotate-3 group-hover:scale-125"
+              loading="lazy"
             />
           </div>
         ))}

@@ -7,6 +7,7 @@ import MessageBoard from './components/MessageBoard';
 import ImageGallery from './components/ImageGallery';
 import FloatingCrls from './components/FloatingCrls';
 import CrlGame from './components/CrlGame';
+import VideoGallery from './components/VideoGallery';
 
 const App: React.FC = () => {
   return (
@@ -15,7 +16,7 @@ const App: React.FC = () => {
       <div 
         className="absolute inset-0 bg-gradient-to-br from-indigo-900/80 via-gray-900/80 to-purple-900/80"
         style={{
-          backgroundImage: "url('/Crl/Imagens/crl-rosto.png')",
+          backgroundImage: "url('/Crl/Imagens/STK-20231224-WA0026.webp')",
           backgroundSize: '200px 200px',
           backgroundBlendMode: 'multiply',
           opacity: 0.1,
@@ -47,6 +48,10 @@ const App: React.FC = () => {
           
           <div className="md:col-span-2">
             <ImageGallery />
+          </div>
+
+          <div className="md:col-span-2">
+            <VideoGallery />
           </div>
         </main>
 
