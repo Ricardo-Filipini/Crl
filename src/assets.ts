@@ -41,3 +41,8 @@ export const GALLERY_IMAGES: CrlImage[] = [
   CRL_THUMBS,
   CRL_FACE,
 ];
+
+// Assets para CrlGame
+export const GAME_PLAYER_IMAGE: CrlImage = CRL_FACE;
+export const GAME_OBSTACLE_IMAGE: CrlImage = CRL_SAUSAGE;
+export const GAME_COLLECTIBLE_IMAGE: CrlImage = CRL_THUMBS;

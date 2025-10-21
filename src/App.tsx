@@ -6,6 +6,7 @@ import CrlQuiz from './components/CrlQuiz';
 import MessageBoard from './components/MessageBoard';
 import ImageGallery from './components/ImageGallery';
 import FloatingCrls from './components/FloatingCrls';
+import CrlGame from './components/CrlGame';
 
 const App: React.FC = () => {
   return (
@@ -21,6 +22,10 @@ const App: React.FC = () => {
 
           <div className="md:col-span-2">
             <WallOfShame />
+          </div>
+
+          <div className="md:col-span-2">
+            <CrlGame />
           </div>
 
           <div className="bg-black bg-opacity-40 p-6 rounded-2xl shadow-lg shadow-lime-500/30 border-2 border-lime-500">
